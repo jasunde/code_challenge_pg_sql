@@ -64,5 +64,29 @@ router.post('/', function (req, res) {
   });
 });
 
+// Update a treat
+router.patch('/:id', function (req, res) {
+  var treat = req.body;
+  pool
+    .connect()
+    .then(function (client) {
+      var treat = req.body;
+      client
+        .query(
+          'UPDATE treats SET name = $1, description = $2 '+
+          'WHERE id = $3',
+          [treat.name, treat.description, req.params.id]
+        )
+        .then(function (result) {
+          client.release();
+          res.sendStatus(204);
+        })
+        .catch(function (err) {
+          console.log('INSERT error:', err);
+          res.sendStatus(500);
+        });
+  });
+});
+
 
 module.exports = router;

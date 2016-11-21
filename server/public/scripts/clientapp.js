@@ -28,6 +28,8 @@ $(document).ready(function () {
     postTreat(newTreat);
   });
 
+  $('#treat-display').on('click', '.update', updateTreat);
+
   /**---------- AJAX Functions ----------**/
 
   // GET /treats
@@ -77,6 +79,28 @@ $(document).ready(function () {
     });
   }
 
+  // PUT /treats/id
+  function updateTreat() {
+    var $treat = $(this).closest('.individual-treat');
+
+    var treat = {};
+    $treat.find('input').serializeArray().forEach(function (input) {
+      treat[input.name] = input.value;
+    });
+
+    $.ajax({
+      method: 'PATCH',
+      url: '/treats/' + $treat.data('id'),
+      data: treat,
+      success: function (response) {
+        getTreats();
+      },
+      error: function (response) {
+        console.log(response);
+      }
+    });
+  }
+
   /** ---------- DOM Functions ----------**/
 
   function clearDom() {
@@ -108,8 +132,12 @@ $(document).ready(function () {
                   '</div>' +
                   '</div>' +
                   '</div>' +
-                  '<h3>' + treat.name + '</h3>' +
-                  '<p>' + treat.description + '</p>' +
+                  '<label for="name' + treat.id + '">Name:</label>'+
+                  '<input type="text" id="name' + treat.id + '" name="name" value="' + treat.name + '" />' +
+                  '<label for="description' + treat.id + '">Description:</label>'+
+                  '<input type="text" id="description' + treat.id + '" '+
+                  ' name="description" value="' + treat.description + '" />'+
+                  '<button class="update">Update</button>'+
                   '</div>');
 
     $treat.data('id', treat.id);
