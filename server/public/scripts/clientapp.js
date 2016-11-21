@@ -29,6 +29,7 @@ $(document).ready(function () {
   });
 
   $('#treat-display').on('click', '.update', updateTreat);
+  $('#treat-display').on('click', '.delete', deleteTreat);
 
   /**---------- AJAX Functions ----------**/
 
@@ -93,6 +94,24 @@ $(document).ready(function () {
       url: '/treats/' + $treat.data('id'),
       data: treat,
       success: function (response) {
+        clearDom();
+        getTreats();
+      },
+      error: function (response) {
+        console.log(response);
+      }
+    });
+  }
+
+  // DELETE /treats/id
+  function deleteTreat() {
+    var treatId = $(this).closest('.individual-treat').data('id');
+
+    $.ajax({
+      method: 'DELETE',
+      url: '/treats/' + treatId,
+      success: function (response) {
+        clearDom();
         getTreats();
       },
       error: function (response) {
@@ -138,6 +157,7 @@ $(document).ready(function () {
                   '<input type="text" id="description' + treat.id + '" '+
                   ' name="description" value="' + treat.description + '" />'+
                   '<button class="update">Update</button>'+
+                  '<button class="delete">Delete</button>'+
                   '</div>');
 
     $treat.data('id', treat.id);

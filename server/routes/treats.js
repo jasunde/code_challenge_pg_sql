@@ -82,11 +82,32 @@ router.patch('/:id', function (req, res) {
           res.sendStatus(204);
         })
         .catch(function (err) {
-          console.log('INSERT error:', err);
+          console.log('UPDATE error:', err);
           res.sendStatus(500);
         });
   });
 });
 
+// Update a treat
+router.delete('/:id', function (req, res) {
+  pool
+    .connect()
+    .then(function (client) {
+      var treat = req.body;
+      client
+        .query(
+          'DELETE FROM treats WHERE id = $1',
+          [req.params.id]
+        )
+        .then(function (result) {
+          client.release();
+          res.sendStatus(204);
+        })
+        .catch(function (err) {
+          console.log('DELETE error:', err);
+          res.sendStatus(500);
+        });
+  });
+});
 
 module.exports = router;
